@@ -3,7 +3,7 @@ name: FreeXCraft 续期
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 */2 * * *'   # 每2小时执行一次
+    - cron: '0 */3 * * *'   # 每3小时执行一次
 
 jobs:
   renew:
