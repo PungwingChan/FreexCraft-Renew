@@ -13,3 +13,4 @@
 | `FXC_ACCOUNT` | `email,password` | 登录账号 | ✅ |
 | `TG_BOT` | `chat_id,bot_token` | Telegram 通知 | ⬜ |
 | `GOST_PROXY` | `socks5://user:pass@host:port` | 代理 | ⬜ |
+| `PRIVATE_REPO_TOKEN` | GitHub PAT | 访问私库权限 | ✅ |
