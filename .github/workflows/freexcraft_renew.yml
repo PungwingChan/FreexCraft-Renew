@@ -1,19 +1,17 @@
 name: FreeXCraft 续期
-
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 */3 * * *'   # 每3小时执行一次
+    - cron: '0 */3 * * *'
+
+permissions:
+  contents: write
 
 jobs:
   renew:
     runs-on: ubuntu-latest
     timeout-minutes: 5
-
     steps:
-      - name: 📥 检出代码
-        uses: actions/checkout@v4
-
       - name: 📥 拉取私库脚本
         uses: actions/checkout@v4
         with:
@@ -22,7 +20,7 @@ jobs:
           path: private
 
       - name: 📂 移动脚本到工作目录
-        run: mv private/freexcraft_renew.sh freexcraft_renew.sh
+        run: cp private/freexcraft_renew.sh freexcraft_renew.sh
 
       - name: 🛡️ 启动 GOST 代理转发
         if: ${{ env.GOST_PROXY != '' }}
@@ -44,4 +42,8 @@ jobs:
           FXC_ACCOUNT: ${{ secrets.FXC_ACCOUNT }}
           GOST_PROXY: ${{ secrets.GOST_PROXY }}
           TG_BOT: ${{ secrets.TG_BOT }}
+          PRIVATE_REPO_TOKEN: ${{ secrets.PRIVATE_REPO_TOKEN }}
+          REPO_OWNER: ${{ github.repository_owner }}
+          REPO_DIR: ${{ github.workspace }}/private
+          SCRIPT_NAME: freexcraft_renew.sh
         run: bash freexcraft_renew.sh
