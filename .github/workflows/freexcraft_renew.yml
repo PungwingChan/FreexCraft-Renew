@@ -1,5 +1,4 @@
 name: FreeXCraft 续期
-
 on:
   workflow_dispatch:
   schedule:
@@ -9,11 +8,7 @@ jobs:
   renew:
     runs-on: ubuntu-latest
     timeout-minutes: 5
-
     steps:
-      - name: 📥 检出代码
-        uses: actions/checkout@v4
-
       - name: 📥 拉取私库脚本
         uses: actions/checkout@v4
         with:
@@ -44,4 +39,22 @@ jobs:
           FXC_ACCOUNT: ${{ secrets.FXC_ACCOUNT }}
           GOST_PROXY: ${{ secrets.GOST_PROXY }}
           TG_BOT: ${{ secrets.TG_BOT }}
+          PRIVATE_REPO_TOKEN: ${{ secrets.PRIVATE_REPO_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository_owner }}/FreexCraft-Renew-Private
         run: bash freexcraft_renew.sh
+
+      - name: 📤 推回私库（如有 hash 更新）
+        env:
+          PRIVATE_REPO_TOKEN: ${{ secrets.PRIVATE_REPO_TOKEN }}
+        run: |
+          cd private
+          if ! git diff --quiet; then
+            git config user.email "actions@github.com"
+            git config user.name "GitHub Actions"
+            git add freexcraft_renew.sh
+            git commit -m "🔄 自动更新 next-action hash"
+            git push "https://${PRIVATE_REPO_TOKEN}@github.com/${{ github.repository_owner }}/FreexCraft-Renew-Private.git" HEAD
+            echo "✅ 已推回私库"
+          else
+            echo "ℹ️ hash 无变化，无需推送"
+          fi
