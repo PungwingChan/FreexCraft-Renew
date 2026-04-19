@@ -37,6 +37,18 @@ jobs:
           echo "✅ GOST 已启动，测试连通性..."
           curl -s -x http://127.0.0.1:8080 https://api.ipify.org | sed 's/\.[0-9]*$/.**/' && echo
 
+      - name: 🔍 调试 chunk 内容
+        env:
+          GOST_PROXY: ${{ secrets.GOST_PROXY }}
+        run: |
+          PROXY_ARG=""
+          if [ -n "$GOST_PROXY" ]; then
+            PROXY_ARG="-x http://127.0.0.1:8080"
+          fi
+          curl -s --compressed $PROXY_ARG \
+            "https://freexcraft.com/_next/static/chunks/f8cb51f045dee3c1.js" \
+            | grep -o 'registerServerReference.\{0,80\}' | head -5
+
       - name: 🔧 执行续期
         env:
           FXC_ACCOUNT: ${{ secrets.FXC_ACCOUNT }}
