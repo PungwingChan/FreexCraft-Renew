@@ -49,13 +49,13 @@ jobs:
           curl -s --compressed $PROXY_ARG \
             "https://freexcraft.com/_next/static/chunks/f8cb51f045dee3c1.js" \
             -o /tmp/f8cb.js
-          python3 -c "
+          python3 << 'PYEOF'
 with open('/tmp/f8cb.js', 'rb') as f:
     content = f.read().decode('utf-8', errors='ignore')
 idx = content.find('renewServer')
 if idx >= 0:
     print(repr(content[idx-200:idx+50]))
-"
+PYEOF
 
       - name: 🔧 执行续期
         env:
