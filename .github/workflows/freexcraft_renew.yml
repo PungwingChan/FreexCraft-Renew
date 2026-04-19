@@ -45,9 +45,15 @@ jobs:
           if [ -n "$GOST_PROXY" ]; then
             PROXY_ARG="-x http://127.0.0.1:8080"
           fi
+          echo "=== 文件前200字节 ==="
           curl -s --compressed $PROXY_ARG \
             "https://freexcraft.com/_next/static/chunks/f8cb51f045dee3c1.js" \
-            | grep -o 'registerServerReference.\{0,80\}' | head -5
+            | head -c 200
+          echo ""
+          echo "=== 搜索 registerServerReference ==="
+          curl -s --compressed $PROXY_ARG \
+            "https://freexcraft.com/_next/static/chunks/f8cb51f045dee3c1.js" \
+            | grep -o 'registerServerReference.\{0,80\}' | head -3
 
       - name: 🔧 执行续期
         env:
