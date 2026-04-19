@@ -45,14 +45,17 @@ jobs:
           if [ -n "$GOST_PROXY" ]; then
             PROXY_ARG="-x http://127.0.0.1:8080"
           fi
-          echo "=== b5fe3814 的 callServer 上下文 ==="
-          curl -s --compressed $PROXY_ARG \
-            "https://freexcraft.com/_next/static/chunks/b5fe3814b78762b3.js" \
-            | grep -o '..\{40\}callServer.\{40\}' | head -5
-          echo "=== f8cb51f0 的 callServer 上下文 ==="
+          echo "=== f8cb51f0 renewServer 前后200字符 ==="
           curl -s --compressed $PROXY_ARG \
             "https://freexcraft.com/_next/static/chunks/f8cb51f045dee3c1.js" \
-            | grep -o '..\{40\}callServer.\{40\}' | head -5
+            -o /tmp/f8cb.js
+          python3 -c "
+with open('/tmp/f8cb.js', 'rb') as f:
+    content = f.read().decode('utf-8', errors='ignore')
+idx = content.find('renewServer')
+if idx >= 0:
+    print(repr(content[idx-200:idx+50]))
+"
 
       - name: 🔧 执行续期
         env:
