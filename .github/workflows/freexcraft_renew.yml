@@ -45,12 +45,11 @@ jobs:
           if [ -n "$GOST_PROXY" ]; then
             PROXY_ARG="-x http://127.0.0.1:8080"
           fi
-          echo "=== f8cb51f0 renewServer 前后200字符 ==="
           curl -s --compressed $PROXY_ARG \
             "https://freexcraft.com/_next/static/chunks/f8cb51f045dee3c1.js" \
             -o /tmp/f8cb.js
-          printf "with open('/tmp/f8cb.js','rb') as f:\n    content=f.read().decode('utf-8',errors='ignore')\nidx=content.find('renewServer')\nif idx>=0:\n    print(repr(content[idx-200:idx+50]))\n" > /tmp/debug.py
-          python3 /tmp/debug.py
+          printf 'import re\nf=open("/tmp/f8cb.js","rb")\nc=f.read().decode("utf-8",errors="ignore")\nf.close()\nm=re.search(r"createServerReference\)\(\"([a-f0-9]{40})\"",c)\nprint(m.group(1) if m else "NO MATCH")\n' > /tmp/test.py
+          python3 /tmp/test.py
 
       - name: 🔧 执行续期
         env:
