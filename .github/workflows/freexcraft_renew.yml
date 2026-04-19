@@ -45,15 +45,17 @@ jobs:
           if [ -n "$GOST_PROXY" ]; then
             PROXY_ARG="-x http://127.0.0.1:8080"
           fi
+          PAGE=$(curl -s --compressed $PROXY_ARG \
+            "https://freexcraft.com/_next/static/chunks/f8cb51f045dee3c1.js" \
+            | head -c 100)
+          echo "f8cb51f045dee3c1.js 内容: $PAGE"
+          echo "---"
           for chunk in "0cdcecd2e6616dcc" "1c563119bef5f75d" "269dc890dd37ee5c" "4d63c31ee7a9e4e3" "73e3194f06db260e" "797fcb0710da3be2" "79ea9d7ac1a07060" "7fefd175575f78c3" "8a29015bee7b5ae4" "961311cbebbffb6d" "9b09ccb27930acc5" "a6dad97d9634a72d" "b3a21374a09cba2b" "b5fe3814b78762b3" "d20df5616b418e28" "d96012bcfc98706a" "f8cb51f045dee3c1"; do
             result=$(curl -s --compressed $PROXY_ARG \
               "https://freexcraft.com/_next/static/chunks/${chunk}.js" \
-              | grep -o 'registerServerRef')
+              | grep -oE '[a-f0-9]{40}' | head -3)
             if [ -n "$result" ]; then
-              echo "✅ 找到 registerServerRef: ${chunk}.js"
-              curl -s --compressed $PROXY_ARG \
-                "https://freexcraft.com/_next/static/chunks/${chunk}.js" \
-                | grep -o 'registerServerReference.\{0,80\}'
+              echo "✅ ${chunk}.js 含40位哈希: $result"
             fi
           done
 
