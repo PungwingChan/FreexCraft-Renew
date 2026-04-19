@@ -16,8 +16,8 @@ jobs:
           token: ${{ secrets.PRIVATE_REPO_TOKEN }}
           path: private
 
-      - name: 📂 移动脚本到工作目录
-        run: mv private/freexcraft_renew.sh freexcraft_renew.sh
+      - name: 📂 复制脚本到工作目录
+        run: cp private/freexcraft_renew.sh freexcraft_renew.sh
 
       - name: 🛡️ 启动 GOST 代理转发
         if: ${{ env.GOST_PROXY != '' }}
@@ -47,6 +47,7 @@ jobs:
         env:
           PRIVATE_REPO_TOKEN: ${{ secrets.PRIVATE_REPO_TOKEN }}
         run: |
+          cp freexcraft_renew.sh private/freexcraft_renew.sh
           cd private
           if ! git diff --quiet; then
             git config user.email "actions@github.com"
